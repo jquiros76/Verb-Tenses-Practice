@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verb Tenses Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090f;--surface:#0f1018;--card:#14151f;--card2:#1a1b28;
+  --border:#22243a;--border2:#2d3050;
+  --ink:#eaeeff;--ink2:#7b82b0;--muted:#3a3f66;
+  --present:#3b82f6;--present-bg:rgba(59,130,246,.12);
+  --past:#f59e0b;--past-bg:rgba(245,158,11,.12);
+  --future:#10b981;--future-bg:rgba(16,185,129,.12);
+  --perfect:#a78bfa;--perfect-bg:rgba(167,139,250,.12);
+  --continuous:#f43f5e;--continuous-bg:rgba(244,63,94,.12);
+  --green:#4ade80;--red:#f87171;--gold:#fbbf24;
+  --correct-bg:rgba(74,222,128,.08);--wrong-bg:rgba(248,113,113,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh}
+.hdr{background:linear-gradient(180deg,#0d0e1a,#09090f);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;gap:14px;}
+.hdr-icon{width:44px;height:44px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,var(--present),var(--perfect));display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.hdr-text h1{font-size:1.1rem;font-weight:800}
+.hdr-text p{font-size:.72rem;color:var(--ink2);margin-top:2px}
+.hdr-pts{margin-left:auto;text-align:right}
+.hdr-pts-num{font-family:'DM Mono',monospace;font-size:1.8rem;font-weight:500;color:var(--gold);line-height:1}
+.hdr-pts-lbl{font-size:.62rem;color:var(--muted)}
+.tense-tabs{background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;display:flex;padding:0 14px;}
+.tense-tabs::-webkit-scrollbar{display:none}
+.tt{padding:11px 16px;cursor:pointer;white-space:nowrap;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'Plus Jakarta Sans',sans-serif;}
+.tt:hover{color:var(--ink2)}
+.tt.active-present{color:var(--present);border-bottom-color:var(--present)}
+.tt.active-past{color:var(--past);border-bottom-color:var(--past)}
+.tt.active-future{color:var(--future);border-bottom-color:var(--future)}
+.tt.active-perfect{color:var(--perfect);border-bottom-color:var(--perfect)}
+.tt.active-cont{color:var(--continuous);border-bottom-color:var(--continuous)}
+.prog-bar{height:2px;background:var(--border)}
+.prog-fill{height:100%;transition:width .4s ease}
+.main{max-width:720px;margin:0 auto;padding:22px 13px 80px}
+.tense-banner{border-radius:16px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;border:1px solid var(--border);}
+.tb-icon{font-size:2rem;flex-shrink:0}
+.tb-name{font-size:1.1rem;font-weight:800}
+.tb-formula{font-family:'DM Mono',monospace;font-size:.75rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:4px 10px;margin-top:5px;display:inline-block;color:var(--ink2);}
+.tb-uses{font-size:.75rem;color:var(--ink2);margin-top:5px;line-height:1.5}
+.tb-stats{margin-left:auto;text-align:right;flex-shrink:0}
+.tb-prog{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500}
+.tb-lbl{font-size:.62rem;color:var(--muted);margin-top:2px}
+.stats-strip{display:flex;gap:8px;margin-bottom:18px}
+.sstat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+.sstat-val{font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500;line-height:1}
+.sstat-lbl{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.qcard{background:var(--card);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px;transition:border-color .3s;}
+.qcard.ok{border-color:var(--green)}.qcard.fail{border-color:var(--red)}
+.qcard-head{padding:16px 18px 12px;border-bottom:1px solid var(--border)}
+.qcard-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.q-num{width:28px;height:28px;border-radius:8px;flex-shrink:0;background:var(--card2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink2);}
+.qcard.ok .q-num{background:var(--green);color:#000;border-color:var(--green)}
+.qcard.fail .q-num{background:var(--red);color:#fff;border-color:var(--red)}
+.q-typetag{font-size:.6rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 9px;border-radius:20px;}
+.tag-mc{background:rgba(59,130,246,.15);color:var(--present)}
+.tag-write{background:rgba(167,139,250,.15);color:var(--perfect)}
+.tag-neg{background:rgba(244,63,94,.15);color:var(--continuous)}
+.tag-q{background:rgba(16,185,129,.15);color:var(--future)}
+.tag-err{background:rgba(245,158,11,.15);color:var(--past)}
+.q-signal{margin-left:auto;font-size:.6rem;font-weight:600;color:var(--muted);font-family:'DM Mono',monospace}
+.q-sentence{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:13px 15px;font-family:'DM Mono',monospace;font-size:.92rem;line-height:1.7;color:var(--ink);}
+.q-sentence .blank{display:inline-block;min-width:90px;border-bottom:2px solid var(--muted);text-align:center;color:var(--muted);font-style:italic;margin:0 3px;}
+.q-instruction{font-size:.75rem;color:var(--ink2);margin-bottom:8px}
+.q-verb-hint{display:inline-block;margin-top:7px;font-size:.7rem;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-family:'DM Mono',monospace;}
+.mc-opts{display:flex;flex-direction:column;gap:7px;padding:14px 16px}
+.mc-opt{display:flex;align-items:center;gap:9px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;cursor:pointer;font-size:.86rem;color:var(--ink);transition:all .15s;user-select:none;}
+.mc-opt:hover:not(.disabled){border-color:var(--present);background:var(--present-bg)}
+.mc-opt.selected{border-color:var(--present);background:var(--present-bg)}
+.mc-opt.correct{border-color:var(--green);background:var(--correct-bg);color:var(--green);font-weight:600}
+.mc-opt.wrong{border-color:var(--red);background:var(--wrong-bg);color:var(--red)}
+.mc-opt.disabled{cursor:default}
+.mc-opt .ol{width:24px;height:24px;flex-shrink:0;border-radius:6px;border:1.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.68rem;}
+.mc-opt.correct .ol{background:var(--green);color:#000;border-color:var(--green)}
+.mc-opt.wrong .ol{background:var(--red);color:#fff;border-color:var(--red)}
+.mc-opt.selected .ol{background:var(--present);color:#fff;border-color:var(--present)}
+.write-area{padding:14px 16px}
+.write-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.write-input{background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:9px 14px;color:var(--ink);font-family:'DM Mono',monospace;font-size:.88rem;min-width:180px;flex:1;outline:none;transition:border-color .2s;}
+.write-input:focus{border-color:var(--perfect)}
+.write-input.ok{border-color:var(--green);background:rgba(74,222,128,.06);color:var(--green)}
+.write-input.fail{border-color:var(--red);background:rgba(248,113,113,.06)}
+.write-input:disabled{opacity:.8}
+.write-btn{background:var(--perfect);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.write-btn:hover{background:#8b5cf6}
+.write-btn:disabled{background:var(--border);color:var(--muted);cursor:default}
+.qfb{margin:0 16px 15px;padding:11px 14px;border-radius:9px;font-size:.8rem;line-height:1.6;display:none}
+.qfb.show{display:block}
+.qfb.ok{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#86efac}
+.qfb.fail{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);color:#fca5a5}
+.qfb .corrected{margin-top:8px;padding:8px 12px;background:rgba(74,222,128,.1);border-radius:7px;font-family:'DM Mono',monospace;font-size:.82rem;color:#86efac;}
+.qfb .formula-note{margin-top:7px;padding:7px 11px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:7px;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--ink2);}
+.complete{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:36px 24px;text-align:center;display:none;}
+.complete.show{display:block}
+.complete-emoji{font-size:3.5rem;margin-bottom:12px}
+.complete-score{font-family:'DM Mono',monospace;font-size:3.5rem;font-weight:500;line-height:1;margin-bottom:4px}
+.complete-lbl{font-size:.8rem;color:var(--ink2);margin-bottom:16px}
+.complete-grade{font-size:1rem;font-weight:700;margin-bottom:18px}
+.complete-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.chip{padding:7px 14px;border-radius:20px;font-size:.75rem;font-weight:700}
+.chip-ok{background:rgba(74,222,128,.1);color:var(--green)}
+.chip-fail{background:rgba(248,113,113,.08);color:var(--red)}
+.chip-pts{background:rgba(251,191,36,.1);color:var(--gold)}
+.complete-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.cbtn{padding:10px 22px;border-radius:10px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .2s}
+.cbtn-primary{background:linear-gradient(135deg,var(--present),var(--perfect));color:#fff}
+.cbtn-primary:hover{opacity:.85}
+.cbtn-sec{background:var(--surface);border:1px solid var(--border);color:var(--ink2)}
+.cbtn-sec:hover{border-color:var(--present);color:var(--present)}
+@keyframes popUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.qcard{animation:popUp .3s ease both}
+.qcard:nth-child(2){animation-delay:.05s}.qcard:nth-child(3){animation-delay:.1s}
+.qcard:nth-child(4){animation-delay:.15s}.qcard:nth-child(5){animation-delay:.2s}
+.qcard:nth-child(6){animation-delay:.25s}.qcard:nth-child(7){animation-delay:.3s}
+.qcard:nth-child(8){animation-delay:.35s}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-icon">⏳</div>
+  <div class="hdr-text"><h1>Verb Tenses Practice</h1><p>Selección múltiple · Writing · Corrección instantánea</p></div>
+  <div class="hdr-pts"><div class="hdr-pts-num" id="g-pts">0</div><div class="hdr-pts-lbl">puntos</div></div>
+</div>
+<div class="tense-tabs" id="tense-tabs"></div>
+<div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+<div class="main" id="main-area"></div>
+<script>
+var TENSES = [
+{id:'present-simple',label:'Present Simple',icon:'🌞',color:'var(--present)',colorClass:'present',formula:'Subject + base verb (+ s/es for he/she/it)',uses:'Habitual actions • General truths • Schedules',signals:'always, usually, every day, never, often, sometimes',
+questions:[
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct form of the verb:',sentence:'She _____ coffee every morning. (drink)',signal:'every morning',opts:['drink','drinks','is drinking','drank'],ans:1,corrected:'She <strong>drinks</strong> coffee every morning.',exp:'With <em>she/he/it</em> in Present Simple → add <strong>-s</strong> to the verb. "Drinks" is the correct 3rd person singular form.',formula:'he/she/it + verb-s'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write the correct form of the verb in parentheses:',sentence:'The sun _____ in the east. (rise)',signal:'general truth',hint:'(rise)',answers:['rises'],corrected:'The sun <strong>rises</strong> in the east.',exp:'Scientific/general truths → Present Simple. 3rd person singular → <strong>rises</strong>.',formula:'Subject + verb-s/es'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct negative form:',sentence:'He _____ eat meat. He is vegetarian.',signal:'habit / fact',opts:["doesn't","don't","isn't","wasn't"],ans:0,corrected:"He <strong>doesn't</strong> eat meat.",exp:"Negative with he/she/it: <strong>doesn't + base verb</strong>.",formula:"he/she/it + doesn't + base verb"},
+  {type:'mc',tag:'tag-q',tagLabel:'Pregunta',instruction:'Choose the correct question form:',sentence:'_____ she speak English fluently?',signal:'question',opts:['Does','Do','Is','Has'],ans:0,corrected:'<strong>Does</strong> she speak English fluently?',exp:'Questions with he/she/it in Present Simple: <strong>Does + subject + base verb?</strong>',formula:'Does + he/she/it + base verb?'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:"Write the negative form using a contraction:",sentence:'They _____ (not / live) in San José. They live in Cartago.',hint:"(not / live) → contraction",answers:["don't live","do not live"],corrected:"They <strong>don't live</strong> in San José.",exp:"Negative with I/you/we/they: <strong>don't + base verb</strong>.",formula:"I/you/we/they + don't + base verb"},
+  {type:'mc',tag:'tag-err',tagLabel:'Error',instruction:'Find the sentence with an error:',sentence:'Which sentence is INCORRECT?',signal:'error detection',opts:['He works every day.','She studies at night.','They goes to school.','I wake up at 6 a.m.'],ans:2,corrected:'"They <strong>go</strong> to school." (not "goes" — they is plural)',exp:'"Goes" is only for he/she/it. With <em>they/we/I/you</em> → use the base verb: <strong>go</strong>.',formula:'they/we/I/you + base verb (no -s)'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write a complete question in Present Simple:',sentence:'_____ (you / usually / have) breakfast before work?',hint:'(Do + you + usually + have)',answers:['do you usually have','Do you usually have'],corrected:'<strong>Do you usually have</strong> breakfast before work?',exp:'Questions with I/you/we/they: <strong>Do + subject + adverb + base verb?</strong>',formula:'Do + I/you/we/they + base verb?'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct form for a schedule/timetable:',sentence:'The train _____ at 9:15 every morning.',signal:'timetable / schedule',opts:['leaves','is leaving','will leave','left'],ans:0,corrected:'The train <strong>leaves</strong> at 9:15 every morning.',exp:'For scheduled/timetabled events → Present Simple is natural.',formula:'Present Simple for schedules'}
+]},
+{id:'present-cont',label:'Present Continuous',icon:'🔄',color:'var(--continuous)',colorClass:'cont',formula:'Subject + am/is/are + verb-ing',uses:'Actions happening NOW • Temporary situations • Future arrangements',signals:'now, right now, at the moment, currently, today, this week',
+questions:[
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct form:',sentence:'Look! She _____ in the rain. (dance)',signal:'right now / look!',opts:['dances','is dancing','danced','has danced'],ans:1,corrected:'She <strong>is dancing</strong> in the rain.',exp:'"Look!" signals something happening at this exact moment → <strong>Present Continuous</strong>.',formula:'Subject + is/am/are + verb-ing'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write the correct Present Continuous form:',sentence:'We _____ (study) for our English exam this week.',hint:'(am/is/are + studying)',answers:['are studying'],corrected:'We <strong>are studying</strong> for our English exam this week.',exp:'"This week" = temporary situation → Present Continuous.',formula:'we + are + verb-ing'},
+  {type:'mc',tag:'tag-neg',tagLabel:'Negativo',instruction:"Choose the correct negative form:",sentence:"He _____ right now. He's on vacation.",signal:'right now',opts:["isn't working","doesn't work","wasn't working","hasn't worked"],ans:0,corrected:"He <strong>isn't working</strong> right now.",exp:"Negative Present Continuous: <strong>am/is/are + not + verb-ing</strong>.",formula:'Subject + is/am/are + not + verb-ing'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Transform into a question:',sentence:'_____ (they / come) to the party tonight?',hint:'(Are + they + coming)',answers:['Are they coming','are they coming'],corrected:'<strong>Are they coming</strong> to the party tonight?',exp:'Future arrangements → Present Continuous. Question: <strong>Are/Is/Am + subject + verb-ing?</strong>',formula:'Are/Is/Am + subject + verb-ing?'},
+  {type:'mc',tag:'tag-err',tagLabel:'Error',instruction:'Find the sentence with an error:',sentence:'Which sentence is INCORRECT?',signal:'error detection',opts:["I'm feeling great today.","She is knowing the answer.","They are waiting outside.","He is reading a novel."],ans:1,corrected:'"She <strong>knows</strong> the answer." (state verb — not used in -ing)',exp:'<strong>Stative verbs</strong> (know, love, want, understand, believe) are NOT used in continuous forms.',formula:'Stative verbs → Simple (not Continuous)'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct tense for this context:',sentence:'I _____ my parents this weekend. We already bought tickets.',signal:'future arrangement',opts:['am visiting','visit','will visit','visited'],ans:0,corrected:'I <strong>am visiting</strong> my parents this weekend.',exp:'Future plans already arranged → Present Continuous is preferred.',formula:'Present Continuous for confirmed future plans'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write the full sentence in Present Continuous:',sentence:'The children _____ (not / watch) TV. They _____ (play) outside.',hint:"aren't watching / are playing",answers:["aren't watching / are playing","are not watching / are playing"],corrected:"The children <strong>aren't watching</strong> TV. They <strong>are playing</strong> outside.",exp:"Negative: aren't + verb-ing. Affirmative: are + verb-ing.",formula:"Subject + aren't + verb-ing / Subject + are + verb-ing"}
+]},
+{id:'past-simple',label:'Past Simple',icon:'📅',color:'var(--past)',colorClass:'past',formula:'Subject + verb-ed (regular) / irregular past',uses:'Completed actions in the past • Series of past events • Past habits',signals:'yesterday, last year, ago, in 2010, when, then',
+questions:[
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct Past Simple form:',sentence:'She _____ to Paris last summer. (go)',signal:'last summer',opts:['goed','went','has gone','was going'],ans:1,corrected:'She <strong>went</strong> to Paris last summer.',exp:'"Go" is irregular: go → <strong>went</strong>.',formula:'go → went (irregular)'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write the Past Simple form of the verb:',sentence:'He _____ (study) very hard for the exam last night.',hint:'(study) → regular verb + -ied',answers:['studied'],corrected:'He <strong>studied</strong> very hard for the exam last night.',exp:'Regular verb ending in consonant+y → drop y, add <strong>-ied</strong>.',formula:'study → studied (y → ied)'},
+  {type:'mc',tag:'tag-neg',tagLabel:'Negativo',instruction:'Choose the correct negative form:',sentence:'They _____ the movie because it was too long.',signal:'past event',opts:["didn't finish","don't finish","haven't finished","weren't finish"],ans:0,corrected:"They <strong>didn't finish</strong> the movie.",exp:"Past Simple negative: <strong>didn't + base verb</strong> (ALL subjects).",formula:"Subject + didn't + base verb"},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write the Past Simple question:',sentence:'_____ (you / see) that movie last week?',hint:'(Did + you + see)',answers:['Did you see','did you see'],corrected:'<strong>Did you see</strong> that movie last week?',exp:'Past Simple question: <strong>Did + subject + base verb?</strong>',formula:'Did + subject + base verb?'},
+  {type:'mc',tag:'tag-err',tagLabel:'Error',instruction:'Find the error in Past Simple:',sentence:'Which sentence is INCORRECT?',signal:'error detection',opts:["I didn't go to school yesterday.","She wrote a letter to her friend.","He didn't ate breakfast this morning.","They arrived late to the meeting."],ans:2,corrected:'"He <strong>didn\'t eat</strong> breakfast." (base verb after didn\'t)',exp:"After <strong>didn't</strong>, always use the <strong>base verb</strong>.",formula:"didn't + base verb (never past form)"},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct Past Simple form:',sentence:'I _____ my keys, so I had to call a locksmith.',signal:'past sequence',opts:['lose','lost','was losing','have lost'],ans:1,corrected:'I <strong>lost</strong> my keys.',exp:'"Lose" is irregular: lose → <strong>lost</strong>.',formula:'lose → lost (irregular)'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Complete with the correct Past Simple forms:',sentence:'Yesterday, she _____ (wake) up early, _____ (have) breakfast, and _____ (drive) to work.',hint:'wake→woke / have→had / drive→drove',answers:['woke / had / drove','woke up / had / drove'],corrected:'She <strong>woke</strong> up early, <strong>had</strong> breakfast, and <strong>drove</strong> to work.',exp:'Series of past actions → all in Past Simple. Irregular verbs: wake→woke, have→had, drive→drove.',formula:'Sequence of past events → Past Simple'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct form for a past habit:',sentence:'When I was young, I _____ to the beach every summer.',signal:'when I was young / every summer',opts:['went','go','was going','have gone'],ans:0,corrected:'I <strong>went</strong> to the beach every summer.',exp:'Past habits → Past Simple with time expressions.',formula:'Past Simple for past habits'}
+]},
+{id:'past-cont',label:'Past Continuous',icon:'🌀',color:'var(--continuous)',colorClass:'cont',formula:'Subject + was/were + verb-ing',uses:'Action in progress at a past moment • Interrupted past action • Parallel past actions',signals:'while, when, at 3 pm yesterday, all day, as',
+questions:[
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct form:',sentence:'I _____ dinner when she called. (cook)',signal:'when + interruption',opts:['cooked','was cooking','have cooked','had cooked'],ans:1,corrected:'I <strong>was cooking</strong> dinner when she called.',exp:'"Was cooking" = action in progress when another shorter action interrupted it.',formula:'was/were + verb-ing + when + Past Simple'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write the correct Past Continuous form:',sentence:'They _____ (watch) a movie while it _____ (rain) outside.',hint:'was/were + verb-ing for both',answers:['were watching / was raining','were watching while it was raining'],corrected:'They <strong>were watching</strong> a movie while it <strong>was raining</strong> outside.',exp:'"While" connects two simultaneous past continuous actions.',formula:'Past Continuous + while + Past Continuous'},
+  {type:'mc',tag:'tag-neg',tagLabel:'Negativo',instruction:'Choose the correct negative:',sentence:'She _____ attention during the meeting yesterday.',signal:'yesterday / during',opts:["wasn't paying","didn't paying","hasn't paid","weren't pay"],ans:0,corrected:"She <strong>wasn't paying</strong> attention.",exp:"Past Continuous negative: <strong>was/were + not + verb-ing</strong>.",formula:'Subject + was/were + not + verb-ing'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Form a Past Continuous question:',sentence:'_____ (he / work) at 10 pm last night?',hint:'(Was + he + working)',answers:['Was he working','was he working'],corrected:'<strong>Was he working</strong> at 10 pm last night?',exp:'Past Continuous question: <strong>Was/Were + subject + verb-ing?</strong>',formula:'Was/Were + subject + verb-ing?'},
+  {type:'mc',tag:'tag-err',tagLabel:'Error',instruction:'Which sentence correctly uses Past Continuous?',sentence:'Choose the CORRECT sentence:',signal:'correct usage',opts:["She was knowing the answer.","I was walking home when I found a wallet.","They were liking the food.","He was owning a car last year."],ans:1,corrected:'<strong>"I was walking home when I found a wallet."</strong> ✓',exp:'"Walking" is an action verb → correct. Know, like, own are stative verbs → NOT used in -ing form.',formula:'Action verbs → -ing / Stative verbs → Simple'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct combination:',sentence:'While she _____ the dishes, the phone _____.',signal:'while / interruption',opts:['was washing / rang','washed / was ringing','was washing / was ringing','had washed / rang'],ans:0,corrected:'While she <strong>was washing</strong> the dishes, the phone <strong>rang</strong>.',exp:'Ongoing action (was washing) + sudden interruption (rang).',formula:'While + Past Continuous + Past Simple (interruption)'}
+]},
+{id:'present-perfect',label:'Present Perfect',icon:'✅',color:'var(--perfect)',colorClass:'perfect',formula:'Subject + have/has + past participle',uses:'Life experiences • Recent events • Unfinished time periods • With since/for',signals:'ever, never, already, yet, just, since, for, recently',
+questions:[
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct form:',sentence:'She _____ to Japan three times. (be)',signal:'three times / experience',opts:['was','has been','is','went'],ans:1,corrected:'She <strong>has been</strong> to Japan three times.',exp:'"Three times" = life experience without specific time → Present Perfect.',formula:'has/have + past participle (life experience)'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Complete with Present Perfect:',sentence:'I _____ (not / finish) my homework yet.',hint:"(haven't + finished)",answers:["haven't finished","have not finished"],corrected:"I <strong>haven't finished</strong> my homework yet.",exp:'"Yet" in negatives → Present Perfect.',formula:"haven't/hasn't + past participle + yet"},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose: Present Perfect or Past Simple?',sentence:"I _____ my keys. I can't open the door! (lose)",signal:'result in present',opts:['lost','have lost','was losing','had lost'],ans:1,corrected:'I <strong>have lost</strong> my keys!',exp:'The result is felt NOW → Present Perfect.',formula:'Present Perfect → past action with present result'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write the Present Perfect question:',sentence:'_____ (you / ever / try) sushi?',hint:'(Have + you + ever + tried)',answers:['Have you ever tried','have you ever tried'],corrected:'<strong>Have you ever tried</strong> sushi?',exp:'"Ever" in questions about life experience → Present Perfect.',formula:'Have/Has + subject + ever + past participle?'},
+  {type:'mc',tag:'tag-err',tagLabel:'Error',instruction:'Find the error:',sentence:'Which sentence is INCORRECT?',signal:'error detection',opts:["I've lived here for 5 years.","She has already eaten lunch.","He has seen that movie yesterday.","They haven't decided yet."],ans:2,corrected:'"He <strong>saw</strong> that movie yesterday." (use Past Simple with "yesterday")',exp:'"Yesterday" is a specific past time → must use <strong>Past Simple</strong>.',formula:'Yesterday/last year/ago → Past Simple (NOT Present Perfect)'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct form:',sentence:'She has worked at this company _____ 2018.',signal:'since / for',opts:['since','for','during','ago'],ans:0,corrected:'She has worked here <strong>since</strong> 2018.',exp:'"Since" = starting point in time. "For" = duration.',formula:'since + starting point / for + duration'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Complete with Present Perfect (just):',sentence:'You should eat something. She _____ (just / make) lunch.',hint:'(has + just + made)',answers:['has just made'],corrected:'She <strong>has just made</strong> lunch.',exp:'"Just" = very recently → Present Perfect.',formula:'has/have + just + past participle'},
+  {type:'mc',tag:'tag-q',tagLabel:'Pregunta',instruction:'Choose the correct question:',sentence:'_____ he _____ his report yet?',signal:'yet (question)',opts:['Has / finished','Did / finish','Is / finishing','Does / finish'],ans:0,corrected:'<strong>Has</strong> he <strong>finished</strong> his report yet?',exp:'"Yet" in questions → Present Perfect.',formula:'Has/Have + subject + past participle + yet?'}
+]},
+{id:'past-perfect',label:'Past Perfect',icon:'⏮️',color:'var(--perfect)',colorClass:'perfect',formula:'Subject + had + past participle',uses:'Action completed BEFORE another past action • Reported speech • Conditionals',signals:'before, after, already, by the time, when, because',
+questions:[
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct form:',sentence:'When I arrived, the movie _____ already. (start)',signal:'when / already / sequence',opts:['started','had already started','was starting','has started'],ans:1,corrected:'When I arrived, the movie <strong>had already started</strong>.',exp:'The movie started BEFORE I arrived → Past Perfect for the earlier action.',formula:'had + past participle (earlier action) + when + Past Simple (later action)'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Complete with Past Perfect:',sentence:'She failed the exam because she _____ (not / study) enough.',hint:"(hadn't + studied)",answers:["hadn't studied","had not studied"],corrected:"She <strong>hadn't studied</strong> enough.",exp:"Negative Past Perfect: <strong>hadn't + past participle</strong>.",formula:"hadn't + past participle"},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct combination:',sentence:'By the time he _____, we _____ everything.',signal:'by the time',opts:['arrived / had finished','had arrived / finished','arrived / finished','had arrived / had finished'],ans:0,corrected:'By the time he <strong>arrived</strong>, we <strong>had finished</strong> everything.',exp:'"By the time" + Past Simple → Past Perfect for the action completed first.',formula:'By the time + Past Simple → Past Perfect'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write a Past Perfect sentence:',sentence:'She _____ (never / visit) London before she moved there.',hint:'(had + never + visited)',answers:['had never visited'],corrected:'She <strong>had never visited</strong> London before she moved there.',exp:'"Never" + Past Perfect = something that had not happened up to a point in the past.',formula:'had + never + past participle'},
+  {type:'mc',tag:'tag-err',tagLabel:'Error',instruction:'Find the error:',sentence:'Which sentence is INCORRECT?',signal:'error detection',opts:["He had eaten before she arrived.","They left before I had arrived.","She had never been to Asia.","I didn't know he had lost his job."],ans:1,corrected:'"They <strong>left</strong> before I arrived." (Past Perfect is optional with before)',exp:'When using "before," the Past Perfect is optional — the sequence is already clear.',formula:'Before/After can clarify sequence → Past Perfect optional but preferred'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct third conditional form:',sentence:'If she _____ harder, she would have passed.',signal:'third conditional / past unreal',opts:['had studied','studied','has studied','would study'],ans:0,corrected:'If she <strong>had studied</strong> harder, she would have passed.',exp:'Third conditional: <strong>If + Past Perfect</strong>, would have + past participle.',formula:'If + had + past participle → would have + past participle'}
+]},
+{id:'future-will',label:'Future: Will',icon:'🔮',color:'var(--future)',colorClass:'future',formula:'Subject + will + base verb',uses:"Predictions • Promises • Spontaneous decisions • Offers",signals:"tomorrow, next year, probably, I think, I'm sure, I promise",
+questions:[
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct future form:',sentence:'I think it _____ tomorrow. Look at those clouds.',signal:'I think / prediction',opts:['rains','will rain','is going to rain','rained'],ans:1,corrected:'I think it <strong>will rain</strong> tomorrow.',exp:'"I think" signals a general prediction → <strong>will</strong>.',formula:'I think / probably + will + base verb'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Complete with WILL (promise):',sentence:"Don't worry. I _____ (call) you as soon as I arrive.",hint:'(will + call)',answers:['will call'],corrected:'I <strong>will call</strong> you as soon as I arrive.',exp:'Promise or commitment → will.',formula:'will + base verb (promise / commitment)'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the spontaneous decision:',sentence:"A: We're out of coffee! B: Don't worry, I _____ some.",signal:'spontaneous decision',opts:['will buy','am going to buy','buy','bought'],ans:0,corrected:'I <strong>will buy</strong> some.',exp:'Decision made AT the moment of speaking → <strong>will</strong>.',formula:'Spontaneous decision → will'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write the negative with a contraction:',sentence:"She _____ (not / be) at the meeting. She's traveling.",hint:"won't + base verb",answers:["won't be"],corrected:"She <strong>won't be</strong> at the meeting.",exp:"will + not = <strong>won't</strong> (contraction).",formula:"won't + base verb"},
+  {type:'mc',tag:'tag-q',tagLabel:'Pregunta',instruction:'Form a yes/no question with WILL:',sentence:'_____ you _____ able to finish by Friday?',signal:'will question',opts:['Will / be','Do / be','Are / being','Would / been'],ans:0,corrected:'<strong>Will you be</strong> able to finish by Friday?',exp:'Will questions: <strong>Will + subject + base verb?</strong>',formula:'Will + subject + base verb?'},
+  {type:'mc',tag:'tag-err',tagLabel:'Error',instruction:'Find the error with WILL:',sentence:'Which sentence is INCORRECT?',signal:'error detection',opts:["She'll be here soon.","I think he will comes later.","They won't finish on time.","Will you help me?"],ans:1,corrected:'"I think he <strong>will come</strong> later." (base verb after will)',exp:'After <strong>will</strong>, always use the <strong>base verb</strong>.',formula:'will + base verb (NEVER will + verb-s)'}
+]},
+{id:'going-to',label:'Future: Going To',icon:'🎯',color:'var(--future)',colorClass:'future',formula:'Subject + am/is/are + going to + base verb',uses:"Prior plans & intentions • Predictions based on evidence",signals:"I've decided, I've planned, I'm planning, look! (evidence)",
+questions:[
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct future form:',sentence:'Look out! That car _____ crash into the wall!',signal:'look! / evidence',opts:['will crash','is going to crash','crashes','crashed'],ans:1,corrected:'That car <strong>is going to crash</strong>!',exp:'Evidence is visible RIGHT NOW → <strong>going to</strong> for predictions based on present evidence.',formula:'going to → prediction with visible evidence'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write the correct form (going to):',sentence:'We _____ (travel) to Europe next summer. We already bought the tickets.',hint:'(are + going to + travel)',answers:['are going to travel'],corrected:'We <strong>are going to travel</strong> to Europe next summer.',exp:'Prior plan already decided → going to.',formula:'am/is/are + going to + base verb (prior plan)'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Will or Going To?',sentence:"A: There's no milk. B: I know, I _____ buy some on my way home.",signal:'prior plan / already decided',opts:['am going to','will','would','might'],ans:0,corrected:'I <strong>am going to</strong> buy some on my way home.',exp:'The person already knew → PRIOR plan → going to.',formula:'Prior decision → going to / Spontaneous decision → will'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Form a going to question:',sentence:'_____ (she / study) medicine at university?',hint:'(Is + she + going to + study)',answers:['Is she going to study','is she going to study'],corrected:'<strong>Is she going to study</strong> medicine?',exp:'Going to question: <strong>Am/Is/Are + subject + going to + base verb?</strong>',formula:'Is/Are/Am + subject + going to + base verb?'},
+  {type:'mc',tag:'tag-err',tagLabel:'Error',instruction:'Find the error:',sentence:'Which sentence is INCORRECT?',signal:'error detection',opts:["She's going to have a baby. (You can see she's pregnant.)","He is going to starts a new job.","They are going to move to Canada.","Is she going to apply for the position?"],ans:1,corrected:'"He is going to <strong>start</strong> a new job." (base verb, not starts)',exp:'After <strong>going to</strong>, always use the <strong>base verb</strong>.',formula:'going to + base verb (never verb-s/ed)'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:"Choose the correct form:",sentence:"I've decided — I _____ quit my job and travel the world.",signal:"I've decided",opts:['am going to','will','would','should'],ans:0,corrected:'I <strong>am going to</strong> quit my job.',exp:"\"I've decided\" = prior decision already made → <strong>going to</strong>.",formula:"I've decided / I'm planning → going to"}
+]},
+{id:'pres-perf-cont',label:'Present Perfect Continuous',icon:'⏱️',color:'var(--perfect)',colorClass:'perfect',formula:'Subject + have/has + been + verb-ing',uses:'How long an activity has been in progress • Recent activity with visible result',signals:'for, since, how long, all day, lately, recently',
+questions:[
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the correct form:',sentence:'She _____ English for three years. (study)',signal:'for three years / in progress',opts:['studied','has studied','has been studying','is studying'],ans:2,corrected:'She <strong>has been studying</strong> English for three years.',exp:'"For three years" with a continuous activity → <strong>Present Perfect Continuous</strong>.',formula:'has/have + been + verb-ing + for/since'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:"Write the Present Perfect Continuous:",sentence:"I'm exhausted! I _____ (work) all day without a break.",hint:'(have + been + working)',answers:['have been working'],corrected:'I <strong>have been working</strong> all day without a break.',exp:'"All day" + visible result (exhausted) → Present Perfect Continuous.',formula:'have/has + been + verb-ing'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Present Perfect Simple or Continuous?',sentence:'He _____ three books this month. (write)',signal:'three books / completed result',opts:['has been writing','has written','was writing','wrote'],ans:1,corrected:'He <strong>has written</strong> three books this month.',exp:'We focus on the <strong>completed result</strong> (three books) → Present Perfect Simple.',formula:'Completed result → Present Perfect Simple / Ongoing activity → Continuous'},
+  {type:'write',tag:'tag-write',tagLabel:'Escribir',instruction:'Write a question with HOW LONG:',sentence:'_____ (how long / you / wait)?',hint:'(How long + have + you + been + waiting)',answers:['How long have you been waiting'],corrected:'<strong>How long have you been waiting?</strong>',exp:'"How long" asks about duration → Present Perfect Continuous question.',formula:'How long + have/has + subject + been + verb-ing?'},
+  {type:'mc',tag:'tag-err',tagLabel:'Error',instruction:'Find the error:',sentence:'Which sentence is INCORRECT?',signal:'error detection',opts:["She has been feeling sick since Monday.","They have been knowing each other for years.","I have been reading this book for a week.","He has been working here since 2020."],ans:1,corrected:'"They <strong>have known</strong> each other for years."',exp:'"Know" is a stative verb → NOT used in continuous form.',formula:'Stative verbs → Present Perfect Simple (not Continuous)'},
+  {type:'mc',tag:'tag-mc',tagLabel:'Selección',instruction:'Choose the best tense:',sentence:'Your eyes are red. _____ you _____? (cry)',signal:'visible evidence / recent activity',opts:['Have / been crying','Have / cried','Did / cry','Are / crying'],ans:0,corrected:'<strong>Have you been crying?</strong>',exp:'Visible result NOW (red eyes) from a recent continuous activity → Present Perfect Continuous.',formula:'Recent activity with visible present result → Present Perfect Continuous'}
+]}
+];
+
+var curTense=0, state={}, globalPts=0;
+TENSES.forEach(function(t,ti){ state[ti]={}; t.questions.forEach(function(_,qi){ state[ti][qi]={answered:false,correct:false}; }); });
+
+var tabsEl=document.getElementById('tense-tabs');
+TENSES.forEach(function(t,i){
+  var btn=document.createElement('button');
+  btn.className='tt'+(i===0?' active-'+t.colorClass:'');
+  btn.id='tab-'+i; btn.textContent=t.label;
+  btn.onclick=function(){switchTense(i);};
+  tabsEl.appendChild(btn);
+});
+
+function switchTense(idx){
+  curTense=idx;
+  TENSES.forEach(function(_,i){ var tab=document.getElementById('tab-'+i); if(tab) tab.className='tt'+(i===idx?' active-'+TENSES[i].colorClass:''); });
+  render(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function render(){
+  var t=TENSES[curTense], s=state[curTense];
+  var answered=Object.values(s).filter(function(x){return x.answered;}).length;
+  var correct=Object.values(s).filter(function(x){return x.correct;}).length;
+  var total=t.questions.length;
+  document.getElementById('prog-fill').style.width=(answered/total*100)+'%';
+  document.getElementById('prog-fill').style.background=t.color;
+  var main=document.getElementById('main-area'); main.innerHTML='';
+  var rgbMap={'present-simple':'59,130,246','present-cont':'244,63,94','past-simple':'245,158,11','past-cont':'244,63,94','present-perfect':'167,139,250','past-perfect':'167,139,250','future-will':'16,185,129','going-to':'16,185,129','pres-perf-cont':'167,139,250'};
+  var rgb=rgbMap[t.id]||'59,130,246';
+  var banner=document.createElement('div'); banner.className='tense-banner';
+  banner.style.background='linear-gradient(135deg,rgba('+rgb+',.08),var(--card))';
+  banner.innerHTML='<div><div class="tb-icon">'+t.icon+'</div></div><div style="flex:1"><div class="tb-name">'+t.label+'</div><div class="tb-formula">'+t.formula+'</div><div class="tb-uses">'+t.uses+'</div></div><div class="tb-stats"><div class="tb-prog" style="color:'+t.color+'">'+correct+'/'+total+'</div><div class="tb-lbl">correctas</div></div>';
+  main.appendChild(banner);
+  var strip=document.createElement('div'); strip.className='stats-strip';
+  var wrong=Object.values(s).filter(function(x){return x.answered&&!x.correct;}).length;
+  strip.innerHTML='<div class="sstat"><div class="sstat-val" style="color:var(--green)">'+correct+'</div><div class="sstat-lbl">✅ Correctas</div></div><div class="sstat"><div class="sstat-val" style="color:var(--red)">'+wrong+'</div><div class="sstat-lbl">❌ Incorrectas</div></div><div class="sstat"><div class="sstat-val" style="color:var(--gold)">'+(total-answered)+'</div><div class="sstat-lbl">🃏 Quedan</div></div>';
+  main.appendChild(strip);
+  var comp=document.createElement('div');
+  comp.className='complete'+(answered===total?' show':''); comp.id='complete-box';
+  if(answered===total){ var pct=Math.round(correct/total*100); comp.innerHTML=makeCompleteHTML(t,correct,total,wrong,pct); }
+  main.appendChild(comp);
+  t.questions.forEach(function(q,qi){ main.appendChild(buildQCard(q,qi,curTense,t)); });
+}
+
+function makeCompleteHTML(t,correct,total,wrong,pct){
+  return '<div class="complete-emoji">'+(pct>=90?'🏆':pct>=70?'🥇':pct>=50?'📖':'💪')+'</div>'+
+    '<div class="complete-score" style="color:'+t.color+'">'+correct+'/'+total+'</div>'+
+    '<div class="complete-lbl">respuestas correctas en '+t.label+'</div>'+
+    '<div class="complete-grade">'+(pct>=90?'🔥 Excellent! You master this tense.':pct>=70?'👍 Good work! Keep practicing.':pct>=50?'📖 Fair — review the explanations.':'💪 Keep going — tenses take practice!')+'</div>'+
+    '<div class="complete-chips"><div class="chip chip-ok">✅ '+correct+' correctas</div><div class="chip chip-fail">❌ '+(total-correct)+' incorrectas</div><div class="chip chip-pts">⭐ +'+(correct*10)+' pts</div></div>'+
+    '<div class="complete-btns"><button class="cbtn cbtn-primary" onclick="restartTense()">↺ Repetir tense</button><button class="cbtn cbtn-sec" onclick="nextTense()">→ Siguiente tense</button></div>';
+}
+
+function buildQCard(q,qi,ti,t){
+  var s=state[ti][qi];
+  var card=document.createElement('div');
+  card.className='qcard'+(s.answered?(s.correct?' ok':' fail'):''); card.id='qcard-'+ti+'-'+qi;
+  var head=document.createElement('div'); head.className='qcard-head';
+  var sentDisplay=q.sentence.includes('_____')?q.sentence.replace('_____','<span class="blank">_____</span>'):q.sentence;
+  head.innerHTML='<div class="qcard-meta"><div class="q-num" id="qnum-'+ti+'-'+qi+'">'+(s.answered?(s.correct?'✓':'✗'):(qi+1))+'</div><span class="q-typetag '+q.tag+'">'+q.tagLabel+'</span>'+(q.signal?'<span class="q-signal">🔑 '+q.signal+'</span>':'')+'</div><div class="q-instruction">'+q.instruction+'</div><div class="q-sentence">'+sentDisplay+'</div>'+(q.hint?'<div class="q-verb-hint">💡 Hint: '+q.hint+'</div>':'');
+  card.appendChild(head);
+  if(q.type==='mc'){
+    var body=document.createElement('div'); body.className='mc-opts';
+    q.opts.forEach(function(opt,oi){
+      var letters=['A','B','C','D'];
+      var div=document.createElement('div');
+      var cls='mc-opt'+(s.answered?' disabled':'')+(s.answered&&oi===q.ans?' correct':s.answered&&s.chosen===oi&&oi!==q.ans?' wrong':'');
+      div.className=cls; div.id='opt-'+ti+'-'+qi+'-'+oi;
+      div.innerHTML='<span class="ol">'+letters[oi]+'</span>'+opt;
+      if(!s.answered) div.onclick=function(){pickMC(ti,qi,oi);};
+      body.appendChild(div);
+    });
+    card.appendChild(body);
+  } else {
+    var body=document.createElement('div'); body.className='write-area';
+    body.innerHTML='<div class="write-row"><input class="write-input" id="wi-'+ti+'-'+qi+'" placeholder="Type your answer..."'+(s.answered?' disabled':'')+' onkeydown="if(event.key===\'Enter\')checkWrite('+ti+','+qi+')"><button class="write-btn" id="wb-'+ti+'-'+qi+'" onclick="checkWrite('+ti+','+qi+')"'+(s.answered?' disabled':'')+'>Check ✓</button></div>';
+    card.appendChild(body);
+    if(s.answered&&s.savedAnswer){ var wi=body.querySelector('#wi-'+ti+'-'+qi); if(wi){wi.value=s.savedAnswer; wi.className='write-input '+(s.correct?'ok':'fail');} }
+  }
+  var fb=document.createElement('div');
+  fb.className='qfb'+(s.answered?' show '+(s.correct?'ok':'fail'):''); fb.id='fb-'+ti+'-'+qi;
+  if(s.answered){ fb.innerHTML=(s.correct?'✅ <strong>Correct!</strong>':'❌ <strong>Incorrect.</strong>')+' '+q.exp+'<div class="corrected">✓ '+q.corrected+'</div><div class="formula-note">📐 '+q.formula+'</div>'; }
+  card.appendChild(fb);
+  return card;
+}
+
+function pickMC(ti,qi,oi){
+  if(state[ti][qi].answered) return;
+  var q=TENSES[ti].questions[qi], correct=oi===q.ans;
+  state[ti][qi]={answered:true,correct:correct,chosen:oi};
+  q.opts.forEach(function(_,i){
+    var el=document.getElementById('opt-'+ti+'-'+qi+'-'+i); if(!el) return;
+    el.classList.add('disabled'); el.onclick=null;
+    if(i===q.ans) el.classList.add('correct');
+    else if(i===oi&&!correct) el.classList.add('wrong');
+  });
+  applyResult(ti,qi,correct,q);
+}
+
+function checkWrite(ti,qi){
+  if(state[ti][qi].answered) return;
+  var q=TENSES[ti].questions[qi];
+  var inp=document.getElementById('wi-'+ti+'-'+qi);
+  var btn=document.getElementById('wb-'+ti+'-'+qi);
+  if(!inp) return;
+  var userVal=inp.value.trim().toLowerCase().replace(/\s+/g,' ');
+  var correct=q.answers.some(function(a){return a.toLowerCase().replace(/\s+/g,' ')===userVal;});
+  state[ti][qi]={answered:true,correct:correct,savedAnswer:inp.value};
+  inp.disabled=true; if(btn) btn.disabled=true;
+  inp.className='write-input '+(correct?'ok':'fail');
+  applyResult(ti,qi,correct,q);
+}
+
+function applyResult(ti,qi,correct,q){
+  var card=document.getElementById('qcard-'+ti+'-'+qi);
+  var num=document.getElementById('qnum-'+ti+'-'+qi);
+  if(card) card.classList.add(correct?'ok':'fail');
+  if(num)  num.textContent=correct?'✓':'✗';
+  var fb=document.getElementById('fb-'+ti+'-'+qi);
+  if(fb){ fb.innerHTML=(correct?'✅ <strong>Correct!</strong>':'❌ <strong>Incorrect.</strong>')+' '+q.exp+'<div class="corrected">✓ '+q.corrected+'</div><div class="formula-note">📐 '+q.formula+'</div>'; fb.className='qfb show '+(correct?'ok':'fail'); }
+  if(correct){globalPts+=10; document.getElementById('g-pts').textContent=globalPts;}
+  var t=TENSES[ti], s=state[ti];
+  var answered=Object.values(s).filter(function(x){return x.answered;}).length;
+  var total=t.questions.length;
+  document.getElementById('prog-fill').style.width=(answered/total*100)+'%';
+  var statsVals=document.querySelectorAll('.sstat-val');
+  var corr=Object.values(s).filter(function(x){return x.correct;}).length;
+  var wrong=Object.values(s).filter(function(x){return x.answered&&!x.correct;}).length;
+  if(statsVals[0]) statsVals[0].textContent=corr;
+  if(statsVals[1]) statsVals[1].textContent=wrong;
+  if(statsVals[2]) statsVals[2].textContent=total-answered;
+  var tbProg=document.querySelector('.tb-prog'); if(tbProg) tbProg.textContent=corr+'/'+total;
+  if(answered===total) setTimeout(function(){showComplete(ti);},500);
+}
+
+function showComplete(ti){
+  var t=TENSES[ti], s=state[ti], total=t.questions.length;
+  var correct=Object.values(s).filter(function(x){return x.correct;}).length;
+  var wrong=total-correct, pct=Math.round(correct/total*100);
+  var comp=document.getElementById('complete-box'); if(!comp) return;
+  comp.innerHTML=makeCompleteHTML(t,correct,total,wrong,pct);
+  comp.classList.add('show');
+  comp.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function restartTense(){
+  var ti=curTense;
+  Object.values(state[ti]).forEach(function(s){if(s.correct) globalPts-=10;});
+  document.getElementById('g-pts').textContent=Math.max(0,globalPts);
+  state[ti]={}; TENSES[ti].questions.forEach(function(_,qi){state[ti][qi]={answered:false,correct:false};});
+  render(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextTense(){switchTense((curTense+1)%TENSES.length);}
+
+render();
+</script>
+</body>
+</html>
